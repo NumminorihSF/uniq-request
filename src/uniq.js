@@ -7,7 +7,7 @@ function Uniq (uniqChecker){
   this.checker = typeof uniqChecker === 'function' ? uniqChecker :
     typeof options === 'function' ? options : defaultChecker;
   this.asyncCheck = this.checker.length > 2;
-  this.memory = {};
+  this.memory = Object.create(null);
 }
 
 Uniq.prototype.doIfUnique = function(uniqString, callbackIfUniq){
