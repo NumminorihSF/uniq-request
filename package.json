@@ -1,6 +1,6 @@
 {
   "name": "uniq-request",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Express middleware for unify request workers on 1 nodejs instance ",
   "main": "build/index.js",
   "scripts": {
