@@ -3,7 +3,7 @@
  */
 "use strict";
 function DataTransport(options){
-  this.paths = (options || {}).paths || {};
+  this.paths = (options || {});
   this.paths.source = (this.paths.source || 'res.locals').split('.');
   this.paths.dest = (this.paths.dest || 'res.locals').split('.');
   this.destLastKey = this.paths.dest.pop();
