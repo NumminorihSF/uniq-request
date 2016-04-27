@@ -24,56 +24,51 @@ var calc = function(req, res, next){
   return next();
 };
 
-app.get('/without/plain', setLocals, function (req, res) {
+var sendResponse = function (req, res) {
   res.send(res.locals.response);
-});
+};
 
-app.get('/with/plain', wrapper(setLocals), function (req, res) {
-  res.send(res.locals.response);
-});
+var Middles = {
+  plain: [],
+  wait: [wait],
+  calc: [calc],
+  hiload: [wait, calc, calc, wait, calc, calc, wait, calc, calc, wait]
+};
 
-app.get('/without/wait', wait, setLocals, function (req, res) {
-  res.send(res.locals.response);
-});
+[
+  'plain',
+  'wait',
+  'calc',
+  'calc/wait',
+  'wait/calc',
+  'hiload'
+].forEach(function(path){
+    app.get.apply(
+      app, ['/without/'+path]
+        .concat(
+        path.split('/')
+          .reduce(function(res, part){
+            return res.concat(Middles[part])
+          },[])
+      )
+        .concat(setLocals)
+        .concat(sendResponse)
+    );
 
-app.get('/with/wait', wrapper(wait, setLocals), function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/without/calc', calc, setLocals, function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/with/calc', wrapper(calc, setLocals), function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/without/calc/wait', calc, wait, setLocals, function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/with/calc/wait', wrapper(calc, wait, setLocals), function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/without/wait/calc', wait, calc, setLocals, function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/with/wait/calc', wrapper(wait, calc, setLocals), function (req, res) {
-  res.send(res.locals.response);
-});
+    app.get.apply(
+      app, ['/with/'+path]
+        .concat(wrapper(
+          path.split('/')
+            .reduce(function(res, part){
+              return res.concat(Middles[part])
+            },[])
+        )
+      ).concat(setLocals).concat(sendResponse)
+    );
+  });
 
 
-app.get('/without/hiload', wait, calc, calc, wait, calc, calc, wait, calc, calc, wait, setLocals, function (req, res) {
-  res.send(res.locals.response);
-});
-
-app.get('/with/hiload', wrapper(wait, calc, calc, wait, calc, calc, wait, calc, calc, wait, setLocals), function (req, res) {
-  res.send(res.locals.response);
-});
-
-var PORT = process.env.port || 3000;
+var PORT = process.env.PORT || 3001;
 
 app.listen(PORT, function () {
   console.log('Example app listening on port '+PORT+'!');
