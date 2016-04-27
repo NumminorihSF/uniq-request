@@ -43,27 +43,20 @@ var Middles = {
   'wait/calc',
   'hiload'
 ].forEach(function(path){
+    var localMiddles = path.split('/')
+      .reduce(function(res, part){
+        return res.concat(Middles[part])
+      },[]);
     app.get.apply(
       app, ['/without/'+path]
-        .concat(
-        path.split('/')
-          .reduce(function(res, part){
-            return res.concat(Middles[part])
-          },[])
-      )
+        .concat(localMiddles)
         .concat(setLocals)
         .concat(sendResponse)
     );
 
     app.get.apply(
       app, ['/with/'+path]
-        .concat(wrapper(
-          path.split('/')
-            .reduce(function(res, part){
-              return res.concat(Middles[part])
-            },[])
-        )
-      ).concat(setLocals).concat(sendResponse)
+        .concat(wrapper(localMiddles)).concat(setLocals).concat(sendResponse)
     );
   });
 
