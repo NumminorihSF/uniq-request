@@ -56,7 +56,9 @@ var Middles = {
 
     app.get.apply(
       app, ['/with/'+path]
-        .concat(wrapper(localMiddles)).concat(setLocals).concat(sendResponse)
+        .concat(wrapper(localMiddles))
+        .concat(setLocals)
+        .concat(sendResponse)
     );
   });
 
